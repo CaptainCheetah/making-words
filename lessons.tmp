@@ -1,0 +1,43 @@
+MAKINGWORDS.lesson = [
+/*
+	{'words': [
+		{'script': 'Take three letters and spell the word are.', 'word':'are'},
+		{'script': 'Take three letters and spell the word ash.', 'word':'ash'},
+		{'script': 'Add one letter and spell cash.', 'word':'cash'},
+		{'script': 'Change one letter and spell rash.', 'word':'rash'},
+		{'script': 'Take four letters and spell care.', 'word':'care'},
+		{'script': 'Add one letter and spell scare.', 'word':'scare'},
+		{'script': 'Change one letter and spell share.', 'word':'share'},
+		{'script': 'Take five letters and spell ashes.', 'word':'ashes'},
+		{'script': 'Take five letters and spell crash.', 'word':'crash'},
+		{'script': 'Can you find the secret word using all of the letters?', 'word':'crashes'}
+	]},
+*/
+	{'words': [
+		{'script': 'Take three letters and spell the word hit. He hit the ball.', 'word':'hit'},
+		{'script': 'Change one letter and spell sit. I will sit on the sofa.', 'word':'sit'},
+		{'script': 'Change one letter and spell bit. The dog bit my hand.', 'word':'bit'},
+		{'script': 'Add one letter and spell bite. It was not a very bad bite.', 'word':'bite'},
+		{'script': 'Use four letters to spell hits. Our team got five hits in one inning.', 'word':'hits'},
+		{'script': 'Start over and use five letters to spell tight. Don\'t tie the rope too tight.', 'word':'tight'},
+		{'script': 'Change one letter and spell right. She got the right answer.', 'word':'right'},
+		{'script': 'Add one letter and spell rights. They fought for their rights.', 'word':'rights'},
+		{'script': 'Start over and use six letters to spell bright. The sun is very bright.', 'word':'bright'},
+		{'script': 'Use six letters to spell sitter. I need to find a dog sitter for this weekend.', 'word':'sitter'},
+		{'script': 'Use seven letters to spell tighter. Pull the rope a little tighter.', 'word':'tighter'},
+		{'script': 'Can you find the secret word using all of the letters?', 'word':'brightest'}
+	]},
+	{'words': [
+		{'script': 'Take two letters and spell the word be. I will be back soon.', 'word':'be'},
+		{'script': 'Take four letters and spell sing. I sing in the choir.', 'word': 'sing'},
+		{'script': 'Add one letter and spell sting. A bee can sting you.', 'word': 'sting'},
+		{'script': 'Use five letters to spell being. They were just being silly.', 'word': 'being'},
+		{'script': 'Use five letters to spell tiger. A tiger is a beautiful animal.', 'word': 'tiger'},
+		{'script': 'Add one letter to spell tigers. Tigers live in jungles.', 'word': 'tigers'},
+		{'script': 'Use six letters to spell bright. That light is too bright.', 'word': 'bright'},
+		{'script': 'Use seven letters to spell singers. The choir had over one hundred singers.', 'word': 'singers'},
+		{'script': 'Add one letter to spell stingers. Bees sting you with their stingers.', 'word': 'stingers'},
+		{'script': 'Use eight letters to spell brighten. When the sun comes up, it will brighten the sky.', 'word': 'brighten'},
+		{'script': 'Can you find the secret word using all of the letters?', 'word': 'brightness'}
+	]}
+];

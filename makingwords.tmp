@@ -1,0 +1,298 @@
+var MAKINGWORDS = {};
+
+MAKINGWORDS.initialized = false;
+
+String.prototype.shuffle = function () {
+    var a = this.split(""),
+        n = a.length;
+
+    for(var i = n - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = a[i];
+        a[i] = a[j];
+        a[j] = tmp;
+    }
+    return a.join("");
+}
+
+// voice variables
+MAKINGWORDS.SPEECH = {};
+// MAKINGWORDS.SPEECH.msg = new SpeechSynthesisUtterance();
+MAKINGWORDS.SPEECH.repeatMsg = '';
+
+MAKINGWORDS.lessonNumber = 0;
+MAKINGWORDS.currentStep = 0;
+
+MAKINGWORDS.checkProfanity = function(s){
+	var str = ((typeof s == 'undefined') ? '' : s);
+	// http://www.purgomalum.com/service/containsprofanity?text=
+	var profanity = ["YXNz", "YXNzZXM=", "YXNzZmFjZQ==", "YXNzZmFjZXM=", "YXNzaG9sZQ==", "YXNzaG9sZXM=", "YmFzdGFyZA==", "YmFzdGFyZHM=", "Yml0Y2g=", "Yml0Y2hlcw==", "Yml0Y2h5", "YnVsbHNoaXQ=", "Y2hyaXN0", "Y29ja3N1Y2tlcg==", "Y29ja3N1Y2tlcnM=", "Y29ja3N1Y2tpbmc=", "Y3VudA==", "Y3VudHM=", "ZGFtbg==", "ZGlja2hlYWQ=", "ZGlja2hlYWRz", "ZmFnZ290", "ZmFnZ290cw==", "ZnVj", "ZnVjaw==", "ZnVja2Vk", "ZnVja2VkdXA=", "ZnVja2Vy", "ZnVja2Vycw==", "ZnVja2luZw==", "ZnVja29mZg==", "ZnVja3M=", "ZnVja3Vw", "ZnVr", "ZnVra2Vy", "ZnVra2Vycw==", "ZnVx", "Z29kZGFtbg==", "Z29kZGFtbml0", "amFja2Fzcw==", "amFja2Fzc2Vz", "bW90aGVyZnVja2Vy", "bW90aGVyZnVja2Vycw==", "bW90aGVyZnVja2luZw==", "bmlnZ2Vy", "bmlnZ2Vycw==", "cHVzc3k=", "c2hpdA==", "c2hpdGhlYWQ=", "c2hpdGhlYWRz", "c2hpdHM=", "c2hpdHRpZXI=", "c2hpdHRpZXN0", "c2hpdHRpbmc=", "c2hpdHR5", "c21hcnRhc3M=", "c21hcnRhc3Nlcw==", "dGl0aWVz", "dGl0cw==", "dGl0dGllcw==", "d2lzZWFzcw==", "d2lzZWFzc2Vz"];
+
+	if (profanity.indexOf(btoa(str)) != -1){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+MAKINGWORDS.SPEECH.talk = function(s, f, n){
+
+	var msg = new SpeechSynthesisUtterance();
+		msg.volume = 1; // 0 to 1
+		msg.rate = .85;
+		msg.pitch = 1;
+		msg.voice = MAKINGWORDS.SPEECH.voices[2];
+
+
+	var forget = ((typeof f == 'undefined') ? false : f );
+	var newMsg = ((typeof n == 'undefined') ? false : n);
+	var holdMsg = ((forget) ? ((newMsg) ? newMsg : msg.text) : false);
+
+	if (typeof s != 'undefined'){
+		msg.text = s;
+	} else {
+		msg.text = MAKINGWORDS.SPEECH.repeatMsg;
+	}
+
+	window.speechSynthesis.speak(msg);
+	if (holdMsg) {
+		MAKINGWORDS.SPEECH.repeatMsg = holdMsg;
+	} else {
+		MAKINGWORDS.SPEECH.repeatMsg = msg.text;
+	}
+}
+
+MAKINGWORDS.dragSrc = null;
+	
+MAKINGWORDS.init = function(){
+	if (MAKINGWORDS.initialized){
+		return;
+	} else {
+		MAKINGWORDS.initialized = true
+	}
+
+	MAKINGWORDS.SPEECH.talk('Welcome to making words!');	
+	MAKINGWORDS.loadLesson(MAKINGWORDS.lessonNumber);
+	
+	$('#check').on('click', function(e){
+		window.speechSynthesis.cancel();
+		var word = '';
+		$('#word .letter').each(function(idx, obj){
+			word += $(obj).html();
+		});
+
+		if (MAKINGWORDS.checkProfanity(word)) return;
+
+		var phrase = 'You spelled ' + word;		
+		// window.speechSynthesis.cancel();
+		var newMsg = false
+		if (word.toUpperCase() == MAKINGWORDS.lesson[MAKINGWORDS.lessonNumber].words[MAKINGWORDS.currentStep].word.toUpperCase()){
+			MAKINGWORDS.currentStep++;
+			
+			phrase += '. That\'s correct! ' + ((MAKINGWORDS.lesson[MAKINGWORDS.lessonNumber].words.length > MAKINGWORDS.currentStep)? 'Now ' : '');
+			newMsg = ((MAKINGWORDS.lesson[MAKINGWORDS.lessonNumber].words.length > MAKINGWORDS.currentStep) ? MAKINGWORDS.lesson[MAKINGWORDS.lessonNumber].words[MAKINGWORDS.currentStep].script : 'Try the next lesson!');
+
+			if (!(MAKINGWORDS.lesson[MAKINGWORDS.lessonNumber].words.length > MAKINGWORDS.currentStep)) $('#check').prop('disabled', true);
+			$('#wordlist').append('<li>' + word.toUpperCase() + '</li>');
+		} else {		
+			phrase += '. That\'s incorrect!';
+		}
+
+		phrase += ((MAKINGWORDS.lesson[MAKINGWORDS.lessonNumber].words.length > MAKINGWORDS.currentStep)? MAKINGWORDS.lesson[MAKINGWORDS.lessonNumber].words[MAKINGWORDS.currentStep].script : ' Congratulations! You found the secret word! This is the end of the lesson.');
+		MAKINGWORDS.SPEECH.talk(phrase, true, newMsg);
+	}).on('mouseup', function(){
+		$(this).blur();
+	});
+	
+	$('#repeat').on('click', function(e){
+		window.speechSynthesis.cancel();
+		MAKINGWORDS.SPEECH.talk();
+	}).on('mouseup', function(){
+		$(this).blur();
+	});
+
+	$('#next').on('click', function(e){
+		window.speechSynthesis.cancel();
+		MAKINGWORDS.lessonNumber++;
+		MAKINGWORDS.loadLesson(MAKINGWORDS.lessonNumber);
+		return false;
+	}).on('mouseup', function(){
+		$(this).blur();
+	});
+
+
+	$('#previous').on('click', function(e){
+		window.speechSynthesis.cancel();
+		MAKINGWORDS.lessonNumber--;
+		MAKINGWORDS.loadLesson(MAKINGWORDS.lessonNumber);
+		return false;
+	}).on('mouseup', function(){
+		$(this).blur();
+	});
+}
+
+MAKINGWORDS.dragInit = function(){
+	$('.letter').off();
+	$('#wordcontainer').off();
+	$('#lettercontainer').off();
+
+	var initObj = function(s){
+	return $(s).on('dragstart', function(e){		
+		// this.style.opacity = '0.4';
+		$(this).css('opacity', '0.4');
+		e.originalEvent.dataTransfer.effectAllowed = 'move';
+		e.originalEvent.dataTransfer.setData('text/html', $("<div />").append($(this).clone()).html());
+		
+	}).on('dragover', function(e){		
+		e.preventDefault();
+		e.originalEvent.dataTransfer.dropEffect = 'move';
+		return false;
+	}).on('dragenter', function(e){		
+		$(this).addClass('over');
+	}).on('dragleave', function(e){		
+		$(this).removeClass('over');
+	}).on('drop', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+
+		var word = '';
+		$('#word .letter').each(function(idx, obj){
+			word += $(obj).html();
+		});
+
+		console.log(word);
+		console.log(e.target);
+
+		return;
+
+		MAKINGWORDS.dragSrc = $("<div />").append($(e.target).clone()).html();
+		var data = e.originalEvent.dataTransfer.getData('text/html');
+		
+		$(e.target).html($(data).html());
+	}).on('dragend', function(e){
+
+		$('.letter').removeClass('over');		
+		$(this).css('opacity', '1');
+
+		if (MAKINGWORDS.dragSrc != null) {
+			$(this).html($(MAKINGWORDS.dragSrc).html());
+			MAKINGWORDS.dragSrc = null;
+		} else {
+			if ( ( $('#wordcontainer').offset().left < e.pageX && e.pageX < ( $('#wordcontainer').offset().left + $('#wordcontainer').outerWidth() ) && $('#wordcontainer').offset().top < e.pageY && e.pageY < ( $('#wordcontainer').offset().top + $('#wordcontainer').outerHeight() ) ) || ( $('#lettercontainer').offset().left < e.pageX && e.pageX < ( $('#lettercontainer').offset().left + $('#lettercontainer').outerWidth() ) && $('#lettercontainer').offset().top < e.pageY && e.pageY < ( $('#lettercontainer').offset().top + $('#lettercontainer').outerHeight() ) ) ) {
+				var classesArr = $(this).attr("class").toString().split(' ');
+				var c = '.' + classesArr[classesArr.length -1];
+				if ($(c).length == 2) {
+					$(this).remove();
+				}
+				
+			}
+		}
+	});
+	}
+
+	$('#wordcontainer').on('dragover', function(e){
+		e.preventDefault();
+		e.originalEvent.dataTransfer.dropEffect = 'move';
+		return false;
+	}).on('drop', function(e){
+		e.preventDefault();
+	
+		var data = e.originalEvent.dataTransfer.getData('text/html');
+
+		var word = '';
+		$('#word .letter').each(function(idx, obj){
+			word += $(obj).html();
+		});
+
+		if (e.pageX < $('#word').offset().left) {
+			if (MAKINGWORDS.checkProfanity($(data).html() + word)) return;
+			$('#word').prepend(initObj($(data).css('opacity','1')));
+		} else {
+			if (MAKINGWORDS.checkProfanity(word + $(data).html())) return;
+			$('#word').append(initObj($(data).css('opacity','1')));
+		}
+
+		MAKINGWORDS.dragSrc = null;
+	});
+
+	$('#lettercontainer').on('dragover', function(e){
+		e.preventDefault();
+		e.originalEvent.dataTransfer.dropEffect = 'move';
+		return false;
+	}).on('drop', function(e){
+		e.preventDefault();
+	
+		var data = e.originalEvent.dataTransfer.getData('text/html');
+
+		var word = '';
+		$('#lettercontainer .letter').each(function(idx, obj){
+			word += $(obj).html();
+		});
+
+		if (e.pageX < $('#letters').offset().left) {
+			if (MAKINGWORDS.checkProfanity($(data).html() + word)) return;
+			$('#letters').prepend(initObj($(data).css('opacity','1')));
+		} else {
+			if (MAKINGWORDS.checkProfanity(word + $(data).html())) return;
+			$('#letters').append(initObj($(data).css('opacity','1')));
+		}
+
+		MAKINGWORDS.dragSrc = null;
+	});
+	
+	initObj('.letter');
+	
+}
+
+MAKINGWORDS.loadLesson = function(n){
+	// window.speechSynthesis.cancel();
+
+	MAKINGWORDS.currentStep = 0;
+
+
+	$('#lessonnumber').html(n + 1);
+
+	if (n <= 0) {
+		$('#previous').prop('disabled', true);
+	} else {
+		$('#previous').prop('disabled', false);
+	}
+
+	if (n >= (MAKINGWORDS.lesson.length -1)){
+		$('#next').prop('disabled', true);
+	} else {
+		$('#next').prop('disabled', false);
+	}
+
+	$('#check').prop('disabled', false);
+
+	$('#letters').empty();
+	$('#word').empty();
+	$('#wordlist').empty();
+	
+	var lastWord = MAKINGWORDS.lesson[n].words[MAKINGWORDS.lesson[n].words.length - 1].word;
+		lastWord = lastWord.split("");
+		lastWord = lastWord.sort();
+		lastWord= lastWord.join("");
+
+	for (var i = 0, len = lastWord.length; i < len; i++) {
+		$('#letters').append('<div class="letter pull-left id' + i + '" draggable="true">' + lastWord[i] + '</div>');
+	}	
+	
+	MAKINGWORDS.dragInit();
+
+	MAKINGWORDS.SPEECH.talk('Lesson ' + (n+1));
+	MAKINGWORDS.SPEECH.talk(MAKINGWORDS.lesson[n].words[MAKINGWORDS.currentStep].script);
+
+}
+
+
+
+$(document).ready(function(){
+window.speechSynthesis.onvoiceschanged = function() {
+    MAKINGWORDS.SPEECH.voices = window.speechSynthesis.getVoices();
+    MAKINGWORDS.init();
+    
+};
+	
+});

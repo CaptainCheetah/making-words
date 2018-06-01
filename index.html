@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Making Words</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+	<div class="container-fluid">
+		<div class="row">
+			 <div class="col-md-9">
+<div class="jumbotron vertical-center">
+<div class="container">
+				<div class="well well-lg clearfix text-center" id="wordcontainer">
+					<div class="text-uppercase text-center clearfix">
+						<div id="word"></div>
+					</div>
+				</div>
+				
+				<div class="well well-lg clearfix" id="lettercontainer">
+					<div class="text-uppercase text-center">
+						<div id="letters"></div>
+					</div>
+				</div>
+				<div class="text-center">
+				<div><strong>Lesson <span id="lessonnumber"></span></strong></div>
+				<button type="button" class="btn btn-default btn-lg pull-left" id="previous"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+
+				<button type="button" class="btn btn-primary btn-lg" id="repeat"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
+				<button type="button" class="btn btn-primary btn-lg" id="check"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></button>
+				<button type="button" class="btn btn-default btn-lg pull-right" id="next"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+
+				</div>
+</div>
+</div>
+			</div>
+			<div class="col-md-3">
+				<div class="panel panel-primary">
+					<div class="panel-heading ">Word list</div>
+					<div class="panel-body">
+						<ul id="wordlist"></ul>
+					</div>
+				</div>
+			</div>
+			 
+		</div>
+	</div>
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="makingwords.js"></script>
+		<script src="lessons.js"></script>
+	</body>
+</html>
